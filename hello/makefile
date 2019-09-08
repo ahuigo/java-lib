@@ -1,0 +1,2 @@
+run:
+	java HelloWorld.java
