@@ -1,2 +1,2 @@
 run:
-	java HelloWorld.java
+	java a.java

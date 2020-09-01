@@ -8,11 +8,13 @@ public class a{
             for (int j=1; j<=10; j++) {
                 System.out.println("j = " + j);
                 if (j >= i) {
-                    break 2;
+                    break;
+                    // 不支持: break 2;
                 }
             }
             // break跳到这里
-            System.out.println("breaked");
+            System.out.println("breaked 1");
         }
+        System.out.println("breaked 2");
     }
 }
