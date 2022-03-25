@@ -33,6 +33,7 @@ public class Aes {
 	public static void main(String[] args) {
 	  String key = "1234567891234567";
 	  String data = "example";
+	  System.out.println("java.class.path:"+System.getProperty("java.class.path"));
 	  System.out.println(Aes.decrypt(Aes.encrypt(data, key), key));
 	  System.out.println(Aes.encrypt(data, key));
 	}
