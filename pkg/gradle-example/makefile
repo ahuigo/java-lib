@@ -1,0 +1,2 @@
+init:
+	gradle init
