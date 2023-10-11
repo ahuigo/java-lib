@@ -2,3 +2,5 @@ jdemo/
 tmp
 *.class
 .vscode/
+.DS_Store
+jproj/target
