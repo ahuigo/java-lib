@@ -8,12 +8,15 @@ import org.junit.jupiter.api.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class AppTest {
+public class AppCaptureStdoutTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     @BeforeEach
     public void setUpStreams() {
-        System.setOut(new PrintStream(outContent));
+        boolean captureStdouterr = true;
+        if (captureStdouterr) {
+            System.setOut(new PrintStream(outContent));
+        }
     }
 
     @AfterEach
@@ -23,6 +26,7 @@ public class AppTest {
 
     @Test
     public void testMain() {
+        // Vscode 中Debug Console 这个tab 才可以看到stdout 输出
         App.main(new String[] {});
         assertEquals("Hello World!\n", outContent.toString());
     }
