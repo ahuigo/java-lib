@@ -56,7 +56,7 @@ public class AppTest {
     }
 
     @Test
-    public void testEtcdPollWatch() {
+    public void testEtcdPoll() {
         // 轮询方式
         Client client = Client.builder().endpoints("http://etcdlocal:2379")
                 .build();
@@ -78,8 +78,6 @@ public class AppTest {
 
                 Thread.sleep(2000); // Sleep for one second
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,33 +88,22 @@ public class AppTest {
     // example:
     // https://github.com/etcd-io/jetcd/blob/main/jetcd-ctl/src/main/java/io/etcd/jetcd/examples/ctl/CommandWatch.java
     public void testEtcdWatch() {
-        Integer maxEvents = 10;
+        Integer maxEvents = 100;
         CountDownLatch latch = new CountDownLatch(maxEvents != null ? maxEvents : Integer.MAX_VALUE);
-        Logger LOGGER = LoggerFactory.getLogger("ahuilogger");
+        Logger LOGGER = LoggerFactory.getLogger("test watcher");
 
         try (Client client = Client.builder().endpoints("http://etcdlocal:2379").build()) {
-            String key = "/a/b.custom";
-            ByteSequence watchKey = ByteSequence.from(key, StandardCharsets.UTF_8);
-            WatchOption watchOpts = WatchOption.builder().withRevision(10).build();
-
-            Consumer<WatchResponse> consumer = response -> {
+            String key = "/c";
+            ByteSequence keyBs = ByteSequence.from(key.getBytes());
+            // WatchOption watchOpts = WatchOption.builder().withRevision(10).build();
+            Watcher watcher2 = client.getWatchClient().watch(keyBs, response -> {
                 for (WatchEvent event : response.getEvents()) {
-                    LOGGER.info("type={}, key={}, value={}",
-                            event.getEventType().toString(),
-                            Optional.ofNullable(event.getKeyValue().getKey())
-                                    .map(bs -> bs.toString(StandardCharsets.UTF_8))
-                                    .orElse(""),
-                            Optional.ofNullable(event.getKeyValue().getValue())
-                                    .map(bs -> bs.toString(StandardCharsets.UTF_8))
-                                    .orElse(""));
+                    System.out.printf("type: %s,key:%s, value:\n%s\n\n",
+                            event.getEventType(),
+                            event.getKeyValue().getKey(),
+                            event.getKeyValue().getValue());
                 }
-
-                latch.countDown();
-            };
-
-            try (Watcher ignored = client.getWatchClient().watch(watchKey, watchOpts, consumer)) {
-                // close the watcher
-            }
+            });
 
             latch.await();
 
